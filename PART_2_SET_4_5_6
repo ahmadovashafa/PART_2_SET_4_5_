@@ -1,0 +1,105 @@
+--set 4
+
+/*1.Alter the "employees_backup" table by dropping the "performance_score" column.*/
+
+alter table employees_backup drop column performance_score;
+
+/*2.Insert a new record into the "employees_backup" table. 
+Use your own discretion for the values.*/
+
+insert into employees_backup values 
+        ( 100 , 'Shafa' , 'Ahmad', 'shafahmad' ,'515.123.4567', 
+        to_date('17-Aug-2019', 'dd-MM-yyyy'), 'IT-PROG' , 450, NULL , NULL, 100
+        );
+
+/*3.Use the ROUND function to round the salary of all employees to the nearest
+hundred in the "employees" table.*/
+
+select round(salary,2) from employees;
+
+/*4.Find the department with the highest number of employees in the "employees" table.*/
+select*from employees;
+select department_name,count(*) as employee_count
+from employees e join departments d on
+e.department_id=d.department_id
+group by department_name
+order by employee_count desc
+fetch next 1 rows only;
+
+/*5.Display the hire_date of all employees in the "employees" table in the format 
+'YYYY-Q' where Q represents the quarter of the year.*/
+
+---
+
+--set5
+
+/*1.Use the MINUS operator to display all employees in the "employees" table
+who have never been a manager (based on the manager_id column).*/
+
+--
+
+/*2.: Write a query that INNER JOINs the "employees" table with the "jobs" table
+and displays the employee's first name, last name, and job title.*/
+
+select e.first_name,e.last_name,j.job_title from
+employees e inner join jobs j on
+ e.job_id=j.job_id;
+ 
+ /*3.Select the first_name, last_name, salary, and department_id from 
+ the "employees" table where the salary is not in the top 5 salaries.*/
+ 
+ select first_name,last_name,salary,department_id
+ from employees where salary not in (
+ select salary from employees
+ order by salary desc
+ fetch next 5 rows only); 
+ 
+ /*4. Create a new table called "employee_projects" that includes 
+ the following columns: "project_id" (integer), "employee_id" (integer),
+ "start_date" (date), "end_date" (date), "role" (varchar).*/
+ 
+ create table employee_projects(
+ project_id integer,
+ employee_id integer,
+ start_date date,
+ end_date date,
+ role varchar2(30)
+ );
+ 
+ /* 5.In the "employees_backup" table, set the commission_pct to 0 for all employees
+ who don't have a commission_pct.*/
+ 
+ update employees_backup set commission_pct=0 where commission_pct is null;
+ 
+ --set6
+ 
+ /*1.Find the mode of the salary 
+ (most frequently occurring salary) in the "employees" table.*/
+ 
+ select salary, count(*) frequency
+ from employees 
+ group by salary
+ order by frequency desc
+ fetch next 1 rows only;
+ 
+ /*2.Display all employees who report to the manager who
+ manages the most employees in the "employees" table.*/
+ --
+ 
+ /*3.Use the CONCAT function to display each employee's full name (first name and last name) in the "employees" table*/
+ 
+ select concat(concat(first_name,' '),last_name) as full_name from employees;
+ --select*from locations;
+ 
+ /*4.Write a query to display the first_name, last_name, and department_name 
+ of all employees who work in countries that have a country_name starting with 'U'.*/
+ select e.first_name,e.last_name,d.department_name,c.country_name
+ from employees e 
+ join departments d on e.department_id=d.department_id 
+ join locations l on d.location_id=l.location_id
+ join countries c on l.country_id=c.country_id
+ where c.country_name like 'U%';
+ 
+/*5.Add a "country_id" column to the "employee_projects" table.*/
+
+alter table employee_projects add  country_id number;
